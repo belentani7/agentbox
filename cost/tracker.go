@@ -172,7 +172,6 @@ func (t *Tracker) Report() {
 
 // MonthlyProjection estimates the end-of-month cost at current rate.
 func (t *Tracker) MonthlyProjection() float64 {
-	now := time.Now()
 	var hourlyTotal float64
 	for _, e := range t.entries {
 		if e.Stopped.IsZero() {
@@ -181,8 +180,9 @@ func (t *Tracker) MonthlyProjection() float64 {
 	}
 
 	// Days remaining in current month
-	daysInMonth := float64(30) // simplified
-	remainingHours := daysInMonth * 24
+	now := time.Now()
+	endOfMonth := time.Date(now.Year(), now.Month()+1, 1, 0, 0, 0, 0, now.Location())
+	remainingHours := endOfMonth.Sub(now).Hours()
 
 	return hourlyTotal * remainingHours
 }
